@@ -1,0 +1,12 @@
+*.docx
+java-masterclass-28-insert-after-method-challenge/
+
+### IntelliJ IDEA ###
+
+.idea
+
+*.iws
+
+*.iml
+
+*.ipr
