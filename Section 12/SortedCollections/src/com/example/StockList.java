@@ -20,20 +20,43 @@ public class StockList {
             //StockItem inStock = list.get(item.getName());
             //if there are already stocks on this item, adjust the quantity
             if(inStock != item){
-                item.adjustStock(inStock.quantityInStock());
+                item.adjustStock(inStock.availableQuantity());
             }
             list.put(item.getName(), item);
-            return item.quantityInStock();
+            return item.availableQuantity();
         }
 
         return 0;
     }
 
     public int sellStock(String item, int quantity){
-        StockItem inStock = list.getOrDefault(item, null);
-        if(inStock != null && (inStock.quantityInStock()>= quantity) && (quantity > 0)){
+        /*   StockItem inStock = list.getOrDefault(item, null);
+        if(inStock != null && (inStock.availableQuantity()>= quantity) && (quantity > 0)){
             inStock.adjustStock(-quantity);
             return  quantity;
+        }
+        return 0;*/
+        StockItem inStock = list.get(item);
+        if(inStock != null && quantity > 0){
+            return inStock.finaliseStock(quantity);
+        }
+        return 0;
+    }
+
+    public int reserveStock ( String item, int quantity){
+        StockItem inStock = list.get(item);
+
+        if(inStock != null && quantity>0){
+            return inStock.reserveStock(quantity);
+        }
+        return 0;
+    }
+
+    public int unreserveStock(String item, int quantity){
+        StockItem inStock = list.get(item);
+
+        if(inStock != null && quantity>0){
+            return inStock.unreservestock(quantity);
         }
         return 0;
     }
@@ -60,8 +83,8 @@ public class StockList {
 
         for(Map.Entry<String, StockItem> item : list.entrySet()){
             StockItem stockItem = item.getValue();
-            double itemValue = stockItem.getPrice() * stockItem.quantityInStock();
-            s = s + stockItem +". There are "+stockItem.quantityInStock() + " in stock. Value of items: ";
+            double itemValue = stockItem.getPrice() * stockItem.availableQuantity();
+            s = s + stockItem +". There are "+stockItem.availableQuantity() + " in stock. Value of items: ";
             s = s + String.format("%.2f",itemValue)  + "\n";
             totalCost += itemValue;
         }
