@@ -18,11 +18,14 @@ public class BankAccount {
     }
 
     public void deposit(double amount) {
-        // Challenge 5
+        boolean status = false;
+
+        // Challenge 5 and 6
         try {
             if (bufferLock.tryLock(1000, TimeUnit.MILLISECONDS)){
                 try {
                     balance += amount;
+                    status = true;
                 } finally {
                     bufferLock.unlock();
                 }
@@ -32,6 +35,7 @@ public class BankAccount {
         } catch (InterruptedException e){
             e.printStackTrace();
         }
+        System.out.println("Transaction status = " + status);
 
         // Challenge 4
         /* bufferLock.lock();
@@ -48,10 +52,14 @@ public class BankAccount {
     }
 
     public void withdraw(double amount) {
+        boolean status = false;
+
+        // Challenge 5 and 6
         try {
             if(bufferLock.tryLock(1000, TimeUnit.MILLISECONDS)){
                 try {
                     balance -= amount;
+                    status = true;
                 } finally {
                     bufferLock.unlock();
                 }
@@ -61,6 +69,9 @@ public class BankAccount {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println("Transaction status = " + status);
+
+
         // Challenge 4
         /*bufferLock.lock();
         try {
