@@ -108,6 +108,9 @@ public class Datasource {
     public static final String QUERY_SONG = "SELECT " + COLUMN_ALBUM_ID + " FROM " +
             TABLE_SONGS + " WHERE " + COLUMN_SONG_TITLE + " = ? ";
 
+    public static final String QUERY_ALBUMS_BY_ARTIST_ID = "SELECT * FROM " + TABLE_ALBUMS + " WHERE " +
+            COLUMN_ALBUM_ARTIST + " = ? ORDER BY" + COLUMN_ALBUM_NAME + " COLLATE NOCASE";
+
     private Connection conn;
     private PreparedStatement querySongInfoView;
 
@@ -117,6 +120,7 @@ public class Datasource {
     private PreparedStatement queryArtist;
     private PreparedStatement queryAlbum;
     private PreparedStatement querySong;
+    private PreparedStatement queryAlbumsByArtistId;
 
     public boolean open() {
         try {
@@ -129,6 +133,7 @@ public class Datasource {
             queryArtist = conn.prepareStatement(QUERY_ARTIST);
             queryAlbum = conn.prepareStatement(QUERY_ALBUM);
             querySong = conn.prepareStatement(QUERY_SONG);
+            queryAlbumsByArtistId = conn.prepareStatement(QUERY_ALBUMS_BY_ARTIST_ID);
             return true;
         } catch (SQLException e) {
             System.out.println("Couldn't connect to database: " + e.getMessage());
@@ -164,6 +169,10 @@ public class Datasource {
 
             if(querySong != null) {
                 querySong.close();
+            }
+
+            if(queryAlbumsByArtistId != null) {
+                queryAlbumsByArtistId.close();
             }
 
             if (conn != null) {
@@ -443,6 +452,26 @@ public class Datasource {
             } catch (SQLException e) {
                 System.out.println("Couldn't reset auto-commit! " + e.getMessage());
             }
+        }
+    }
+
+    public List<Album> queryAlbumForArtistId(int id) {
+        try {
+            queryAlbumsByArtistId.setInt(1, id);
+            ResultSet results = queryAlbumsByArtistId.executeQuery();
+
+            List<Album> albums = new ArrayList<>();
+            while(results.next()) {
+                Album album = new Album();
+                album.setId(results.getInt(1));
+                album.setName(results.getString(2));
+                album.setArtistId(id);
+                albums.add(album);
+            }
+            return albums;
+        } catch (SQLException e) {
+            System.out.println("Query failed: " + e.getMessage());
+            return null;
         }
     }
 }
