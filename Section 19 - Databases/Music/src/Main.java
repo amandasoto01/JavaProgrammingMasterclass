@@ -4,6 +4,7 @@ import model.Song;
 import model.SongArtist;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -49,6 +50,32 @@ public class Main {
         System.out.println();
         datasource.querySongsMetadata();
 
+        System.out.println();
+        int count = datasource.getCount(Datasource.TABLE_SONGS);
+        System.out.println("Number of songs is: " + count);
+
+        System.out.println();
+        datasource.createViewForSongArtists();
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter a song title: ");
+        String title = scanner.nextLine();
+        System.out.println();
+        //songArtists = datasource.querySongInfoView("Go Your Own Way");
+        songArtists = datasource.querySongInfoView(title);
+        if(songArtists.isEmpty()) {
+            System.out.println("Couldn't find the artist for the song");
+            return;
+        }
+
+        for(SongArtist artist : songArtists) {
+            System.out.println("FROM VIEW - Artist name = " + artist.getArtistName() +
+                    " Album name = " + artist.getAlbumName() +
+                    " Track number = " + artist.getTrack());
+
+        }
+
+        datasource.insertSong("Naturally", "Selena Gomez", "Selena and the scene", 1);
         datasource.close();
     }
 }
