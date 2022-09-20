@@ -76,6 +76,11 @@ public class Main {
         }
 
         datasource.insertSong("Naturally", "Selena Gomez", "Selena and the scene", 1);
+        datasource.updateArtistName(203, "Selena gomez");
+
+
+        System.out.println(datasource.queryAlbumForArtistId(203));
+        System.out.println(datasource.updateArtistName(203, "Selena gomez"));
         datasource.close();
     }
 }
